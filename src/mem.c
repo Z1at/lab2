@@ -165,7 +165,6 @@ static struct block_header* memalloc( size_t query, struct block_header* heap_st
             return NULL;
         }
     }
-    return NULL;
     ///
 }
 
