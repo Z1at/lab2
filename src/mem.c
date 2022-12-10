@@ -1,5 +1,12 @@
+#include <stdarg.h>
+
+#define _DEFAULT_SOURCE
+
 #include <unistd.h>
+#include <stdio.h>
 #include <stddef.h>
+#include <stdlib.h>
+#include <assert.h>
 
 #include "mem_internals.h"
 #include "mem.h"
@@ -10,6 +17,7 @@ void debug(const char* fmt, ... );
 
 extern inline block_size size_from_capacity( block_capacity cap );
 extern inline block_capacity capacity_from_size( block_size sz );
+
 
 static bool            block_is_big_enough( size_t query, struct block_header* block ) { return block->capacity.bytes >= query; }
 static size_t          pages_count   ( size_t mem )                      { return mem / getpagesize() + ((mem % getpagesize()) > 0); }
@@ -26,7 +34,6 @@ static void block_init( void* restrict addr, block_size block_sz, void* restrict
 static size_t region_actual_size( size_t query ) { return size_max( round_pages( query ), REGION_MIN_SIZE ); }
 
 extern inline bool region_is_invalid( const struct region* r );
-
 
 
 static void* map_pages(void const* addr, size_t length, int additional_flags) {
@@ -160,17 +167,20 @@ static struct block_header* memalloc( size_t query, struct block_header* heap_st
             if(grow_heap(block.block, query)){
                 return try_memalloc_existing(query, block.block).block;
             }
+            break;
         }
         case BSR_CORRUPTED:{
             return NULL;
         }
     }
+    return NULL;
     ///
 }
 
 void* _malloc( size_t query ) {
   if(!is_inited) heap_init(REGION_MIN_SIZE);
   struct block_header* const addr = memalloc( query, (struct block_header*) HEAP_START );
+
   if (addr) return addr->contents;
   else return NULL;
 }

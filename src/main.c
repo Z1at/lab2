@@ -1,4 +1,4 @@
-#include "src/test.h"
+#include "test.h"
 
 int main() {
     tests();

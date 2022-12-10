@@ -28,6 +28,7 @@ bool test1(){
 //        _free(second_malloc);
         return true;
     }
+    printf("5\n");
 //    _free(first_malloc);
 //    _free(second_malloc);
     return false;
@@ -41,7 +42,7 @@ bool test2(){
     struct block_header* second_malloc_block_header = block_get_header(second_malloc);
 
     _free(second_malloc);
-    return second_malloc_block_header->is_free;
+    return second_malloc_block_header->is_free && !first_malloc_block_header->is_free;
 }
 
 bool test3(){
@@ -55,7 +56,7 @@ bool test3(){
 
     _free(first_malloc);
     _free(second_malloc);
-    return first_malloc_block_header->is_free && second_malloc_block_header->is_free;
+    return first_malloc_block_header->is_free && second_malloc_block_header->is_free && !third_malloc_block_header->is_free;
 }
 
 bool test4(){
